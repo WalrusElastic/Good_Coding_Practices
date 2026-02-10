@@ -127,18 +127,13 @@ from datetime import *  # Wildcard import
 #### String Quotes
 
 - Be **consistent** in your choice of quotes
-- Use double quotes if the string contains single quotes
+- Our unit uses single quotes (') by default
+- Use double quotes only if the string contains single quotes
 
 **✓ Good:**
 ```python
 name = 'John'
 message = "It's a beautiful day"
-```
-
-**✗ Bad:**
-```python
-name = 'John'
-message = 'It\'s a beautiful day'  # Inconsistent quoting
 ```
 
 ---
@@ -277,7 +272,7 @@ Hardcoding values directly in your code makes it inflexible and prone to errors.
 
 **✗ Bad:**
 ```python
-def calculate_discount(price):
+def calculate_discount(price: float) -> float:
     return price * 0.1  # Hardcoded discount rate
 ```
 
@@ -285,7 +280,7 @@ def calculate_discount(price):
 ```python
 DISCOUNT_RATE = 0.1
 
-def calculate_discount(price):
+def calculate_discount(price:float) -> float:
     return price * DISCOUNT_RATE
 ```
 
@@ -304,29 +299,113 @@ PI = 3.14159
 MAX_RETRIES = 3
 DEFAULT_TIMEOUT = 30
 
-def calculate_area(radius):
+def calculate_area(radius: float) -> float:
     return PI * radius ** 2
 ```
 
 ---
+#### Clarify Function Input and Output Data Types
 
-#### Group Large Functions into Classes and Use OOP
+Functions should clearly describe their inputs and outputs and the resective datatypes for both. This improves readability and makes your code easier to use and maintain. 
+Use type hints to clarify the datatypes of the functions inputs/ outputs, and docstrings to clarify and elaborate on the functions purpose 
+
+
+**✗ Bad:**
+```python
+def find_average(values):
+    return sum(values)/ len(values)
+```
+
+**✓ Good:**
+```python
+
+def find_average(values: List[float]) --> float: # type hints used to clarify functions inputs/outputs
+    ''' 
+    Function which takes in a list of floats, and returns the average value of the list.
+    Inputs:
+        values (List(Float)): List containing one or more floats
+    Returns:
+        average (Float): Float representing the average of the list
+    ''' ## Use of docstring to document function
+    average = sum(values)/ len(values)
+    return average
+
+
+```
+
+---
+
+#### Group Similar Functions Together
+
+Organize your code by placing related functions close to each other. This improves readability and makes it easier to understand the code's purpose.
+
+**✓ Good:**
+```python
+# string_utils.py
+
+#################### String validation functions #################### 
+def is_valid_email(email: str) -> bool:
+    pass
+
+def is_valid_phone(phone: str) -> bool:
+    pass
+
+#################### String formatting functions #################### 
+def format_name(first: str, last: str) -> str:
+    pass
+
+def format_address(street: str, city: str, zip_code: str) -> str:
+    pass
+```
+
+---
+**
+#### Standardise Inputs and Outputs Across Similar Functions
+
+Functions that perform similar tasks should follow **consistent** input and output conventions. This makes code easier to understand, reduces mistakes, and allows functions to be used interchangeably.
+**✗ Bad:**
+```python
+def get_usernames(users: list(dict)) -> list:
+    """Return all usernames."""
+    return [user["name"] for user in users]  # returns a list
+
+def get_user_ages(users: list(dict)) -> dict:
+    """Return all ages."""
+    return {user["id"]: user["age"] for user in users}  # returns a dict
+```
+
+
+**✓ Good:**
+```python
+def get_usernames(users: list(dict)) -> list:
+    """Return all usernames."""
+    return {user["id"]: user["name"] for user in users}  # returns a dict
+
+def get_user_ages(users: list(dict)) -> dict:
+    """Return all ages."""
+    return {user["name"]: user["age"] for user in users}  # returns a dict
+```
+
+
+---
+
+#### Group Large Functionality into Classes and Use OOP
 
 When functions become large or share related data, group them into classes. This encapsulates functionality into manageable chunks, improving code organization and maintainability.
 
 **✗ Bad:**
 ```python
-def create_user(name, email):
+def create_user(name: str, email: str):
     # validation logic
     # database insertion
     pass
 
-def update_user(user_id, name, email):
+def update_user(user_id: int, name: str, email: str):
     # validation logic
     # database update
     pass
 
-def delete_user(user_id):
+def delete_user(user_id: int):
     # database deletion
     pass
 ```
@@ -334,6 +413,17 @@ def delete_user(user_id):
 **✓ Good:**
 ```python
 class UserManager:
+    '''
+    Class for the management of user data from a system
+    
+    Attributes:
+        db (str): key for accessing the database #example
+
+    Methods:
+        create_user(name: str, email: str): Validate a new user and add to database
+        update_user(user_id: int, name: str, email: str): Validates the user and updates his profile
+        delete_user(user_id: int): Deletes user from database
+    '''
     def __init__(self, db_connection):
         self.db = db_connection
 
@@ -352,34 +442,12 @@ class UserManager:
 
 ---
 
-#### Group Similar Functions Together
-
-Organize your code by placing related functions close to each other. This improves readability and makes it easier to understand the code's purpose.
-
-**✓ Good:**
-```python
-# string_utils.py
-
-# String validation functions
-def is_valid_email(email):
-    pass
-
-def is_valid_phone(phone):
-    pass
-
-# String formatting functions
-def format_name(first, last):
-    pass
-
-def format_address(street, city, zip_code):
-    pass
-```
-
----
 
 #### Use Modules for Imports
 
-Break your code into logical modules and import them appropriately. Modules can be easily maintained and reused across projects while making your project structure clearer and more professional.
+Break your code into logical Modules and import them appropriately. Modules can be easily maintained and reused across projects while making your project structure clearer and more professional.
+
+Common modules include a utils folder, which contains functions that are used accross your project, though as your project becomes more complex, greater fragmentation may be necessary.
 
 **Project Structure:**
 ```
@@ -390,6 +458,9 @@ my_project/
 │   ├── __init__.py
 │   ├── math_utils.py
 │   └── string_utils.py
+└── models/
+    ├── __init__.py
+    └── User.py
 ```
 
 **✓ Good:**
