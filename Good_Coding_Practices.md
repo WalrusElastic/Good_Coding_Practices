@@ -377,7 +377,7 @@ def get_user_ages(users: list(dict)) -> dict:
 
 **✓ Good:**
 ```python
-def get_usernames(users: list(dict)) -> list:
+def get_usernames(users: list(dict)) -> dict:
     """Return all usernames."""
     return {user["id"]: user["name"] for user in users}  # returns a dict
 
